@@ -12,7 +12,7 @@
         <?= $this->Html->link($article->title, ['action'=> "view", $article->slug]) ?>
         </td>
         <td>
-            <? $article->created->format(DATE_RFC850) ?>
+            <?= $article->created->format(DATE_RFC850) ?>
         </td>
     </tr>
     <?php endforeach; ?>
