@@ -26,16 +26,23 @@ class ArticlesController extends AppController
         $article = $this->Articles->findBySlug($slug)->firstOrFail();
         $this->set(compact('article'));
     }
+
     public function add(){
         $article = $this->Articles->newEntity();
         if($this->request->is('post')){
             $article = $this->Articles->patchEntity($article, $this->request->getData());
             //this is hardcoded now but will be fixed later when authentication is built out
+
+            $article->user_id = 1;
+
             if ($this->Articles->save($article)){
                 $this->Flash->success(__("Your article has been saved."));
                 return $this->redirect((['action'=>'index']));
             }
+            $this->Flash->error(__("Unable to add your Article"));
         }
+        $tags = $this->Articles->Tags->find("list");
+        $this->set("tags", $tags);
         $this->set('article', $article);
     }
     public function edit($slug)
@@ -49,6 +56,10 @@ class ArticlesController extends AppController
             }
             $this->Flash->error(__("Unable to update your article."));
         }
+        $tags = $this->Articles->Tags->find("list");
+
+        $this->set("tags", $tags);
+
         $this->set("article", $article);
     }
     public function delete($slug)
