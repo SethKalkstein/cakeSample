@@ -3,7 +3,7 @@
 
 namespace App\Controller;
 
-use App\Model\Entity\Article;
+use App\Controller\AppController;
 
 class ArticlesController extends AppController
 {
