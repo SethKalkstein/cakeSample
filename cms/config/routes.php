@@ -90,7 +90,9 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->fallbacks(DashedRoute::class);
 });
-
+Router::scope("/articles", function (RouteBuilder $routes){
+    $routes->connect("/tagged/*", ["controller" => "Articles", "action"=>"tags"]);
+});
 /**
  * If you need a different set of middleware or none at all,
  * open new scope and define routes there.
