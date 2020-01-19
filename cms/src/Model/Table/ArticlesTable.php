@@ -9,6 +9,14 @@ use Cake\Validation\Validator;
 
 class ArticlesTable extends Table
 {
+    public function initialize(array $config)
+    {
+        $this->addBehavior('Timestamp');
+        $this->belongsToMany('Tags');
+    }
+    // The $query argument is a query builder instance.
+    // The $options array will contain the 'tags' option we passed
+    // to find('tagged') in our controller action.
     public function findTagged(Query $query, array $options)
     {
         $columns = [
@@ -27,10 +35,37 @@ class ArticlesTable extends Table
         }
         return $query->group(["Articles.id"]);
     }
-    public function initialize(array $config)
+
+    protected function _buildTags($tagString)
     {
-        $this->addBehavior('Timestamp');
-        $this->belongsToMany('Tags');
+        // Trim tags
+        $newTags = array_map('trim', explode(',', $tagString));
+        // Remove all empty tags
+        $newTags = array_filter($newTags);
+        // Reduce duplicated tags
+        $newTags = array_unique($newTags);
+
+        $out = [];
+        $query = $this->Tags->find()
+            ->where(['Tags.title IN' => $newTags]);
+
+        // Remove existing tags from the list of new tags.
+        foreach ($query->extract('title') as $existing) {
+            $index = array_search($existing, $newTags);
+            if ($index !== false) {
+                unset($newTags[$index]);
+            }
+        }
+        debug($newTags);
+        // Add existing tags.
+        foreach ($query as $tag) {
+            $out[] = $tag;
+        }
+        // Add new tags.
+        foreach ($newTags as $tag) {
+            $out[] = $this->Tags->newEntity(['title' => $tag]);
+        }
+        return $out;
     }
 
     public function beforeSave($event, $entity, $options)
