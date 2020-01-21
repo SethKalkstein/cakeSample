@@ -53,7 +53,10 @@ class ArticlesController extends AppController
     // Add to existing src/Controller/ArticlesController.php file
     public function view($slug = null)
     {
-        $article = $this->Articles->findBySlug($slug)->firstOrFail();
+        $article = $this->Articles
+        ->findBySlug($slug)
+        ->contain(["Tags"])
+        ->firstOrFail();
         $this->set(compact('article'));
     }
 
@@ -77,8 +80,14 @@ class ArticlesController extends AppController
     }
     public function edit($slug)
     {
-        $article = $this->Articles->findBySlug($slug)
-        ->contain('Tags')->firstOrFail();
+/*         $article = $this->Articles
+        ->findBySlug($slug)
+        ->contain('Tags')
+        ->firstOrFail(); */
+        $article = $this->Articles
+        ->findBySlug($slug)
+        ->contain(['Tags'])
+        ->firstOrFail();
 
         if($this->request->is(["post", "put"])){
             $this->Articles->patchEntity($article, $this->request->getData());

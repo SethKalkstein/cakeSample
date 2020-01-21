@@ -17,6 +17,7 @@ class ArticlesTable extends Table
             'foreignKey' => "article_id",
             "targetForeignKey" =>  "tag_id",
             "joinTable" => "articles_tags",
+            "dependant" => true
         ]);
     }
     // The $query argument is a query builder instance.
@@ -75,6 +76,9 @@ class ArticlesTable extends Table
 
     public function beforeSave($event, $entity, $options)
     {
+        if($entity->tag_string){
+            $entity->tags = $this->_buildTags($entity->tag_string);
+        }
         if ($entity->isNew() && !$entity->slug){
             $sluggedTitle = Text::slug($entity->title);
             //trim slug to maximum length allowed by schema
