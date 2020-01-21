@@ -12,7 +12,12 @@ class ArticlesTable extends Table
     public function initialize(array $config)
     {
         $this->addBehavior('Timestamp');
-        $this->belongsToMany('Tags');
+        // $this->belongsToMany('Tags');
+        $this->belongsToMany('Tags', [
+            'foreignKey' => "article_id",
+            "targetForeignKey" =>  "tag_id",
+            "joinTable" => "articles_tags",
+        ]);
     }
     // The $query argument is a query builder instance.
     // The $options array will contain the 'tags' option we passed
