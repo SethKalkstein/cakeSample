@@ -13,7 +13,25 @@ class ArticlesController extends AppController
 
         $this->loadComponent("Paginator");
         $this->loadComponent("Flash");
+        $this->Auth->allow(['tags']);
         
+    }
+    public function isAuthorized($user)
+    {
+        $action = $this->request->getParam("action");
+        // The add and tags actions are always allowed to logged in users.
+        if(in_array($action, ["add", "tags"])){
+            return true;
+        }
+        // All other actions require a slug.
+        $slug = $this->request->getParam("pass.0");
+        if(!$slug){
+            return false;
+        }
+            // Check that the article belongs to the current user.
+        $article  = $this->Articles->findBySlug($slug)->first();
+
+        return $article->user_id === $user["id"];
     }
     public function tags()
     {
@@ -66,7 +84,7 @@ class ArticlesController extends AppController
             $article = $this->Articles->patchEntity($article, $this->request->getData());
             //this is hardcoded now but will be fixed later when authentication is built out
 
-            $article->user_id = 1;
+            $article->user_id = $this->Auth->user("id");
 
             if ($this->Articles->save($article)){
                 $this->Flash->success(__("Your article has been saved."));
@@ -90,7 +108,7 @@ class ArticlesController extends AppController
         ->firstOrFail();
 
         if($this->request->is(["post", "put"])){
-            $this->Articles->patchEntity($article, $this->request->getData());
+            $this->Articles->patchEntity($article, $this->request->getData(), ["accessibleFields" => ["user_id" => false]]);
             
             if($this->Articles->save($article)){
                 $this->Flash->success(__("Your Article has been updated."));
