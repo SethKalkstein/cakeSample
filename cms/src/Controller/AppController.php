@@ -86,6 +86,6 @@ class AppController extends Controller
     private function formatName($emailAddress){
         $atSignPos = strpos($emailAddress, "@");
         $greetingName = substr($emailAddress, 0, $atSignPos);
-        return "Hello: ".$greetingName;
+        return "Hello: ".ucfirst($greetingName);
     }
 }
