@@ -68,8 +68,10 @@ class AppController extends Controller
         $this->Auth->allow(["display", "view", "index", "edit"]);
 
         $currentUser = $this->Auth->user('email');
-        $greetingMessage = is_null($currentUser) ? "Please Log In" : $this->formatName($currentUser);
+        $isLoggedIn = is_null($currentUser) ? false : true;
+        $greetingMessage = $isLoggedIn ? $this->formatName($currentUser) : "Please Log In";
         $this->set('greeting', $greetingMessage);
+        $this->set("isLoggedIn", $isLoggedIn);
 
         /*
          * Enable the following component for recommended CakePHP security settings.
