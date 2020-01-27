@@ -14,7 +14,6 @@
  */
 
 $pageDescription = "Seth's Sample CMS";
-// $userId = $this->Auth->user('id');
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,8 +44,12 @@ $pageDescription = "Seth's Sample CMS";
         <div class="top-bar-section">
             <p class="left name"><?= $greeting ?></p>
             <ul class="right">
-                <li><?= $this->Html->link(__('Home'), ['controller' => 'Pages', 'action' => 'display']) ?></li>
-                <li><?= $this->Html->link(__('Log Out'), ['controller' => 'Users', 'action' => 'logout']) ?></li>
+                <?php if($isLoggedIn): ?>
+                    <li><?= $this->Html->link(__('Log Out'), ['controller' => 'Users', 'action' => 'logout']) ?></li>
+                <?php else: ?>
+                    <li><?= $this->Html->link(__('New User'), ['controller' => 'Users', 'action' => 'add']) ?></li>
+                    <li><?= $this->Html->link(__('Log in'), ['controller' => 'Users', 'action' => 'login']) ?></li>
+                <?php endif; ?>
                 <li><a href="">Current Dir: <?= $this->fetch('title') ?></a></li>
             </ul>
         </div>
