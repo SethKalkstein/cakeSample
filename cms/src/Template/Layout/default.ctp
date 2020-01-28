@@ -42,7 +42,7 @@ $pageDescription = "Seth's Sample CMS";
         </ul>
 
         <div class="top-bar-section">
-            <p class="left name"><?= $greeting ?></p>
+            <p class="left name"><?= $greetingMessage ?></p>
             <ul class="right">
                 <?php if($isLoggedIn): ?>
                     <li><?= $this->Html->link(__('Log Out'), ['controller' => 'Users', 'action' => 'logout']) ?></li>

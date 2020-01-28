@@ -69,8 +69,10 @@ class AppController extends Controller
 
         $currentUser = $this->Auth->user('email');
         $isLoggedIn = is_null($currentUser) ? false : true;
-        $greetingMessage = $isLoggedIn ? $this->formatName($currentUser) : "Please Log In";
-        $this->set('greeting', $greetingMessage);
+        $greetingName = $isLoggedIn ? $this->formatName($currentUser) : "";
+        $greetingMessage = ($isLoggedIn ? "Hello " : "Please Log In" ).$greetingName;
+        $this->set('greetingName', $greetingName);
+        $this->set('greetingMessage', $greetingMessage);
         $this->set("isLoggedIn", $isLoggedIn);
 
         /*
@@ -86,6 +88,6 @@ class AppController extends Controller
     private function formatName($emailAddress){
         $atSignPos = strpos($emailAddress, "@");
         $greetingName = substr($emailAddress, 0, $atSignPos);
-        return "Hello: ".ucfirst($greetingName);
+        return ucfirst($greetingName);
     }
 }
