@@ -68,6 +68,29 @@ class UsersTable extends Table
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
 
+        $validator
+            ->integer('role_id')
+            ->requirePresence('role_id', 'create')
+            ->allowEmpty('role_id', false, 'create')
+            ->range('role_id', [1,3], "user role not within valid range", "create");
+
+        $validator
+            ->scalar('fname')
+            ->maxLength('fname', 255)
+            ->requirePresence('fname', 'create')
+            ->notEmptyString('fname');
+
+        $validator
+            ->scalar('lname')
+            ->maxLength('lname', 255)
+            ->requirePresence('lname', 'create')
+            ->notEmptyString('lname');
+
+        $validator
+            ->boolean('active')
+            ->requirePresence('active', 'create')
+            ->allowEmpty('active', false, 'create');
+            
         return $validator;
     }
 
