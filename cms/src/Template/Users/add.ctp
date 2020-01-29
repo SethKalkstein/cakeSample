@@ -3,6 +3,9 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User $user
  */
+
+use Cake\Form\Form;
+
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
@@ -19,6 +22,11 @@
         <?php
             echo $this->Form->control('email');
             echo $this->Form->control('password');
+            echo $this->Form->control('fname', ['label' => __('First Name')]);
+            echo $this->Form->control('lname', ['label' => __('Last Name')]);
+            echo $this->Form->control("active");
+            echo $this->Form->control('roles_id', ['options' => $roles] );
+
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
