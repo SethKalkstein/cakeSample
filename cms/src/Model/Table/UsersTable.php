@@ -40,7 +40,9 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Roles');
+        $this->belongsTo('Roles', [
+            'foreignKey' => 'role_id',
+        ]);
 
         $this->hasMany('Articles', [
             'foreignKey' => 'user_id',

@@ -20,12 +20,36 @@ class UsersController extends AppController
     public function initialize()
     {
         parent::initialize();
-        $this->Auth->allow(["logout", "add"]);
+
+        $this->Auth->allow(["logout"]);
+        //set the authenticated as a user object or false if noone is logged in
+        $loggedIn = $this->Auth->user() ? $this->Users->get($this->Auth->user('id')) : false;
+        $this->set('loggedIn', $loggedIn);
+        // $loggedUser = $this->Auth->identify();
+        // echo "Using Identify: ".var_dump($loggedUser);
+        // $loggedInUser = $this->Users->get($this->Auth->user('id'));
+        // echo "Using Nested Get: ";
+        // echo var_dump($loggedInUser);
+        // $other = $this->Users->get(3);
+        // echo var_dump($other);
     }
+
+/*     private function getLoggedIn(){
+
+        $loggedInUser = $this->Auth->user() ? $this->Users->get($this->Auth->user('id')) : false;
+
+        return $loggedInUser;
+    } */
 
     public function index()
     {
+        $this->paginate = [
+            'contain' => ['Roles']
+        ];
+
         $users = $this->paginate($this->Users);
+
+        $this->set('_serialize', ['users']);
 
         $this->set(compact('users'));
     }
@@ -39,10 +63,32 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
+        $loggedIn = $this->getLoggedIn();
+        $loggedInRoleLevel = $this->getLoggedIn()->role_id;
         $user = $this->Users->get($id, [
             'contain' => ['Articles'],
         ]);
-
+        
+        // if($this->getLoggedIn()->id == $user->id){
+/*         echo "From the view: <br>";
+        echo var_dump($this->getLoggedIn()); */
+        if(!$loggedIn){
+            echo "You're not even logged in, dude!!!";
+        } elseif($this->getLoggedIn()->id == $user->id){
+            echo "This is the person who is logged in";
+            echo "<br>";
+            echo "logged in person's role is ".$loggedIn->role_id;
+        } else {
+            echo "This is NOT the person who is logged in ";
+            echo "<br>";
+            echo "NOT logged in person's role is ". $this->Users->Roles->get($loggedIn->role_id)->name;
+            // echo "logged in person's role is ". $this->Users->get($loggedIn->id, ["role_id"]);
+            // echo "NOT logged in person's role is ". $loggedIn->get("role_id", ["contain" => ["name"]]);
+            // echo "another try: ". $this->Roles->get($loggedIn->id);
+            // echo "NOT logged in person's role is ". $loggedIn->role->name; 
+            //  echo "NOT logged in person's role is ". $loggedIn->role->name;
+        }
+        $this->set('loggedIn', $loggedIn);
         $this->set('user', $user);
     }
 

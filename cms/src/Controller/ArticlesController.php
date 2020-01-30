@@ -16,6 +16,7 @@ class ArticlesController extends AppController
         $this->Auth->allow(['tags']);
         
     }
+
     public function isAuthorized($user)
     {
         $action = $this->request->getParam("action");
@@ -33,6 +34,7 @@ class ArticlesController extends AppController
 
         return $article->user_id === $user["id"];
     }
+    
     public function tags()
     {
         // The 'pass' key is provided by CakePHP and contains all

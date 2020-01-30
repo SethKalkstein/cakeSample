@@ -16,6 +16,7 @@
     </ul>
 </nav>
 <div class="users view large-9 medium-8 columns content">
+<!-- <p>Look at me!!!! <?= $loggedIn->role_id ?></p> -->
     <h3><?= h($user->id) ?></h3>
     <table class="vertical-table">
         <tr>
