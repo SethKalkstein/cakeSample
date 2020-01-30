@@ -15,6 +15,7 @@ use Cake\Form\Form;
         <li><?= $this->Html->link(__('New Article'), ['controller' => 'Articles', 'action' => 'add']) ?></li>
     </ul>
 </nav>
+<!--  -->
 <div class="users form large-9 medium-8 columns content">
     <?= $this->Form->create($user) ?>
     <fieldset>
@@ -24,9 +25,10 @@ use Cake\Form\Form;
             echo $this->Form->control('password');
             echo $this->Form->control('fname', ['label' => __('First Name')]);
             echo $this->Form->control('lname', ['label' => __('Last Name')]);
-            echo $this->Form->control("active");
-            echo $this->Form->control('roles_id', ['options' => $roles] );
-
+            if($loggedIn && $loggedIn->role_id == 1){
+                echo $this->Form->control("active");
+                echo $this->Form->control('roles_id', ['options' => $roles] );
+            }
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

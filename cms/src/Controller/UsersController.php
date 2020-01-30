@@ -21,9 +21,10 @@ class UsersController extends AppController
     {
         parent::initialize();
 
-        $this->Auth->allow(["logout"]);
+        // $this->Auth->allow(["logout", "add"]);
         //set the authenticated as a user object or false if noone is logged in
         $loggedIn = $this->Auth->user() ? $this->Users->get($this->Auth->user('id')) : false;
+        $this->Auth->allow(["logout", (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
         $this->set('loggedIn', $loggedIn);
         // $loggedUser = $this->Auth->identify();
         // echo "Using Identify: ".var_dump($loggedUser);
@@ -63,8 +64,8 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
-        $loggedIn = $this->getLoggedIn();
-        $loggedInRoleLevel = $this->getLoggedIn()->role_id;
+        // $loggedIn = $this->getLoggedIn();
+        // $loggedInRoleLevel = $this->getLoggedIn()->role_id;
         $user = $this->Users->get($id, [
             'contain' => ['Articles'],
         ]);
@@ -72,7 +73,7 @@ class UsersController extends AppController
         // if($this->getLoggedIn()->id == $user->id){
 /*         echo "From the view: <br>";
         echo var_dump($this->getLoggedIn()); */
-        if(!$loggedIn){
+/*         if(!$loggedIn){
             echo "You're not even logged in, dude!!!";
         } elseif($this->getLoggedIn()->id == $user->id){
             echo "This is the person who is logged in";
@@ -88,7 +89,7 @@ class UsersController extends AppController
             // echo "NOT logged in person's role is ". $loggedIn->role->name; 
             //  echo "NOT logged in person's role is ". $loggedIn->role->name;
         }
-        $this->set('loggedIn', $loggedIn);
+        $this->set('loggedIn', $loggedIn); */
         $this->set('user', $user);
     }
 
@@ -104,8 +105,11 @@ class UsersController extends AppController
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+                if($this->Auth->user()){
+                    return $this->redirect(['action' => 'index']);
+                } else {
+                    return $this->redirect('/');
+                }
             }
             // $this->Flash->error();
             $this->Flash->error(__('The user could not be saved. Please, try again.'));

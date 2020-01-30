@@ -84,7 +84,6 @@ class ArticlesController extends AppController
         $article = $this->Articles->newEntity();
         if($this->request->is('post')){
             $article = $this->Articles->patchEntity($article, $this->request->getData());
-            //this is hardcoded now but will be fixed later when authentication is built out
 
             $article->user_id = $this->Auth->user("id");
 
