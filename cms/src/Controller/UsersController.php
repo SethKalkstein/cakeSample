@@ -23,8 +23,10 @@ class UsersController extends AppController
 
         // $this->Auth->allow(["logout", "add"]);
         //set the authenticated as a user object or false if noone is logged in
-        $loggedIn = $this->Auth->user() ? $this->Users->get($this->Auth->user('id')) : false;
-        $this->Auth->allow(["logout", (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
+        $loggedIn = $this->Auth->user() ? $this->getLoggedIn() : false;
+        $this->Auth->allow(["logout", 
+            (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
+        if(!$loggedIn) $this->Auth->deny('edit', 'view', 'delete');
         $this->set('loggedIn', $loggedIn);
         // $loggedUser = $this->Auth->identify();
         // echo "Using Identify: ".var_dump($loggedUser);
@@ -35,12 +37,12 @@ class UsersController extends AppController
         // echo var_dump($other);
     }
 
-/*     private function getLoggedIn(){
+     private function getLoggedIn(){
 
         $loggedInUser = $this->Auth->user() ? $this->Users->get($this->Auth->user('id')) : false;
 
         return $loggedInUser;
-    } */
+     }
 
     public function index()
     {
@@ -127,19 +129,30 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
+        $loggedIn = $this->getLoggedIn();
+
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+        
+        if ($loggedIn && ($user->id == $loggedIn->id || $loggedIn->role_id == 1)){
+            // echo "You are allowed access here";
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $user = $this->Users->patchEntity($user, $this->request->getData());
+                if ($this->Users->save($user)) {
+                    $this->Flash->success(__('The user has been saved.'));
+    
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The user could not be saved. Please, try again.'));
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->set(compact('user'));
+            $this->set('roles', $this->Users->Roles->find('list'));
+        } else {
+            // echo "You are NOT, I say NOT, allowed to access here";
+            $this->Flash->error("You are not allowed to edit user: {$user->lname}, {$user->fname}.");
+            return $this->redirect(['action' => 'index']);
         }
-        $this->set(compact('user'));
     }
 
     /**
