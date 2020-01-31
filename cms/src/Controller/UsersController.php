@@ -27,7 +27,7 @@ class UsersController extends AppController
         $this->Auth->allow(["logout", "delete",
             (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
             // ($loggedIn && $loggedIn->role_id ==1 ? "delete" : "")]);
-        if(!$loggedIn) $this->Auth->deny('edit', 'view', 'delete');
+        if(!$loggedIn) $this->Auth->deny('edit', 'index', 'view', 'delete');
         $this->set('loggedIn', $loggedIn);
         // $loggedUser = $this->Auth->identify();
         // echo "Using Identify: ".var_dump($loggedUser);
@@ -67,32 +67,11 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
-        // $loggedIn = $this->getLoggedIn();
-        // $loggedInRoleLevel = $this->getLoggedIn()->role_id;
+ 
         $user = $this->Users->get($id, [
-            'contain' => ['Articles'],
+            'contain' => ['Articles', 'Roles']
         ]);
-        
-        // if($this->getLoggedIn()->id == $user->id){
-/*         echo "From the view: <br>";
-        echo var_dump($this->getLoggedIn()); */
-/*         if(!$loggedIn){
-            echo "You're not even logged in, dude!!!";
-        } elseif($this->getLoggedIn()->id == $user->id){
-            echo "This is the person who is logged in";
-            echo "<br>";
-            echo "logged in person's role is ".$loggedIn->role_id;
-        } else {
-            echo "This is NOT the person who is logged in ";
-            echo "<br>";
-            echo "NOT logged in person's role is ". $this->Users->Roles->get($loggedIn->role_id)->name;
-            // echo "logged in person's role is ". $this->Users->get($loggedIn->id, ["role_id"]);
-            // echo "NOT logged in person's role is ". $loggedIn->get("role_id", ["contain" => ["name"]]);
-            // echo "another try: ". $this->Roles->get($loggedIn->id);
-            // echo "NOT logged in person's role is ". $loggedIn->role->name; 
-            //  echo "NOT logged in person's role is ". $loggedIn->role->name;
-        }
-        $this->set('loggedIn', $loggedIn); */
+        // echo $user->role->name; //that works!!!!!!!
         $this->set('user', $user);
     }
 

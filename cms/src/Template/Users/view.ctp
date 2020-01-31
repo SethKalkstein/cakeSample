@@ -15,20 +15,26 @@
         <li><?= $this->Html->link(__('New Article'), ['controller' => 'Articles', 'action' => 'add']) ?> </li>
     </ul>
 </nav>
+
 <div class="users view large-9 medium-8 columns content">
-<!-- <p>Look at me!!!! <?= $loggedIn->role_id ?></p> -->
-    <h3><?= h($user->id) ?></h3>
     <table class="vertical-table">
         <tr>
             <th scope="row"><?= __('Email') ?></th>
             <td><?= h($user->email) ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Password') ?></th>
-            <td><?= h($user->password) ?></td>
+            <th scope="row"><?= __('Last Name') ?></th>
+            <td><?= h($user->lname) ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Id') ?></th>
+            <th scope="row"><?= __('First Name') ?></th>
+            <td><?= h($user->fname) ?></td>
+        </tr>
+
+    <?php if($loggedIn->role_id == 1 || $loggedIn->id == $user->id ): ?>
+
+        <tr>
+            <th scope="row"><?= __('User Id') ?></th>
             <td><?= $this->Number->format($user->id) ?></td>
         </tr>
         <tr>
@@ -39,6 +45,19 @@
             <th scope="row"><?= __('Modified') ?></th>
             <td><?= h($user->modified) ?></td>
         </tr>
+        <tr>
+            <th scope="row"><?= __('Role') ?></th>
+            <td><?= h($user->role->name) ?></td>
+        </tr>
+        <tr>
+            <th scope="row" class="actions"><?= __('Actions') ?></th>
+            <td class="actions">
+                    <?= $this->Html->link(__('Edit'), ['controller' => 'Users', 'action' => 'edit', $user->id]) ?>
+                    <?= $this->Form->postLink(__('Delete'), ['controller' => 'Users', 'action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?>
+                </td>
+        </tr>
+    <?php endif; ?>
+
     </table>
     <div class="related">
         <h4><?= __('Related Articles') ?></h4>
@@ -67,9 +86,14 @@
                 <td><?= h($articles->modified) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['controller' => 'Articles', 'action' => 'view', $articles->id]) ?>
+
+                <?php 
+                if($loggedIn->role_id == 1 || $loggedIn->role_id == 2 || $loggedIn->id == $user->id ): ?>
                     <?= $this->Html->link(__('Edit'), ['controller' => 'Articles', 'action' => 'edit', $articles->id]) ?>
                     <?= $this->Form->postLink(__('Delete'), ['controller' => 'Articles', 'action' => 'delete', $articles->id], ['confirm' => __('Are you sure you want to delete # {0}?', $articles->id)]) ?>
-                </td>
+                <?php endif; ?>
+                
+            </td>
             </tr>
             <?php endforeach; ?>
         </table>
