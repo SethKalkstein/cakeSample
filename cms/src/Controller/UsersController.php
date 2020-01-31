@@ -24,8 +24,9 @@ class UsersController extends AppController
         // $this->Auth->allow(["logout", "add"]);
         //set the authenticated as a user object or false if noone is logged in
         $loggedIn = $this->Auth->user() ? $this->getLoggedIn() : false;
-        $this->Auth->allow(["logout", 
+        $this->Auth->allow(["logout", "delete",
             (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
+            // ($loggedIn && $loggedIn->role_id ==1 ? "delete" : "")]);
         if(!$loggedIn) $this->Auth->deny('edit', 'view', 'delete');
         $this->set('loggedIn', $loggedIn);
         // $loggedUser = $this->Auth->identify();
@@ -164,16 +165,32 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
-        } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+        $loggedIn = $this->getLoggedIn();
+
+        if(!$loggedIn) {
+            $this->Flash->error(__('You do not have access to this area.'));
+            return $this->redirect('/');
         }
 
+        if($user->id == $loggedIn->id || $loggedIn->role_id == 1){
+            $this->request->allowMethod(['post', 'delete']);        
+            
+            if ($this->Users->delete($user)) {
+                $this->Flash->success(__('The user has been deleted.'));
+            
+                if ($user->id == $loggedIn->id){
+                    return $this->redirect($this->Auth->logout());
+                }
+            } else {
+                $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            }
+        } else {
+            $this->Flash->error(__('You do not have access to delete this user.'));
+        }
         return $this->redirect(['action' => 'index']);
     }
+
     public function login()
     {
         if($this->request->is("post")) {
