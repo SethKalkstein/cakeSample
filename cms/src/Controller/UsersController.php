@@ -20,22 +20,15 @@ class UsersController extends AppController
     public function initialize()
     {
         parent::initialize();
-
-        // $this->Auth->allow(["logout", "add"]);
         //set the authenticated as a user object or false if noone is logged in
         $loggedIn = $this->Auth->user() ? $this->getLoggedIn() : false;
+
         $this->Auth->allow(["logout", "delete",
             (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
-            // ($loggedIn && $loggedIn->role_id ==1 ? "delete" : "")]);
+
         if(!$loggedIn) $this->Auth->deny('edit', 'index', 'view', 'delete');
+    
         $this->set('loggedIn', $loggedIn);
-        // $loggedUser = $this->Auth->identify();
-        // echo "Using Identify: ".var_dump($loggedUser);
-        // $loggedInUser = $this->Users->get($this->Auth->user('id'));
-        // echo "Using Nested Get: ";
-        // echo var_dump($loggedInUser);
-        // $other = $this->Users->get(3);
-        // echo var_dump($other);
     }
 
      private function getLoggedIn(){
@@ -116,7 +109,7 @@ class UsersController extends AppController
         ]);
         
         if ($loggedIn && ($user->id == $loggedIn->id || $loggedIn->role_id == 1)){
-            // echo "You are allowed access here";
+
             if ($this->request->is(['patch', 'post', 'put'])) {
                 $user = $this->Users->patchEntity($user, $this->request->getData());
                 if ($this->Users->save($user)) {
@@ -129,7 +122,6 @@ class UsersController extends AppController
             $this->set(compact('user'));
             $this->set('roles', $this->Users->Roles->find('list'));
         } else {
-            // echo "You are NOT, I say NOT, allowed to access here";
             $this->Flash->error("You are not allowed to edit user: {$user->lname}, {$user->fname}.");
             return $this->redirect(['action' => 'index']);
         }
@@ -176,8 +168,7 @@ class UsersController extends AppController
             $user = $this->Auth->identify();
             if($user) {
                 $this->Auth->setUser($user);
-                // return $this->setAction('view', "3");
-                // return $this->redirect($this->setAction('view', "1"));
+
                 return $this->redirect(['action' => 'view',  $this->Auth->user('id')]);
             }
             $this->Flash->error("Your username or password is incorrect.");
