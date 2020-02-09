@@ -19,6 +19,9 @@ class ArticlesTable extends Table
             "joinTable" => "articles_tags",
             "dependant" => true
         ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
+        ]);
     }
     // The $query argument is a query builder instance.
     // The $options array will contain the 'tags' option we passed
