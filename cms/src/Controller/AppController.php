@@ -65,8 +65,11 @@ class AppController extends Controller
             "unauthorizedRedirect" => $this->referer()
         ]);
         
-        $this->Auth->allow(["display", "view", "index", "edit"]);
-
+        // $this->Auth->deny(["display", "view", "index", "edit"]);
+        $this->Auth->allow(["display", "home"]);
+        // $this->Auth->allow(["display", "view", "index", "edit"]);
+        // $this->Auth->allow([ "display"]);
+        //
         $currentUser = $this->Auth->user('email');
         $isLoggedIn = is_null($currentUser) ? false : true;
         $greetingName = $isLoggedIn ? $this->formatName($currentUser) : "";

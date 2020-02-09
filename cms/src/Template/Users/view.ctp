@@ -74,26 +74,27 @@
                 <th scope="col"><?= __('Modified') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
             </tr>
-            <?php foreach ($user->articles as $articles): ?>
+            <?php foreach ($user->articles as $article): ?>
             <tr>
-                <td><?= h($articles->id) ?></td>
-                <td><?= h($articles->user_id) ?></td>
-                <td><?= h($articles->title) ?></td>
-                <td><?= h($articles->slug) ?></td>
-                <td><?= h($articles->body) ?></td>
-                <td><?= h($articles->published) ?></td>
-                <td><?= h($articles->created) ?></td>
-                <td><?= h($articles->modified) ?></td>
+                <td><?= h($article->id) ?></td>
+                <td><?= h($article->user_id) ?></td>
+                <td><?= h($article->title) ?></td>
+                <td><?= h($article->slug) ?></td>
+                <td><?= h($article->body) ?></td>
+                <td><?= h($article->published) ?></td>
+                <td><?= h($article->created) ?></td>
+                <td><?= h($article->modified) ?></td>
                 <td class="actions">
-                    <?= $this->Html->link(__('View'), ['controller' => 'Articles', 'action' => 'view', $articles->id]) ?>
 
-                <?php 
-                if($loggedIn->role_id == 1 || $loggedIn->role_id == 2 || $loggedIn->id == $user->id ): ?>
-                    <?= $this->Html->link(__('Edit'), ['controller' => 'Articles', 'action' => 'edit', $articles->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['controller' => 'Articles', 'action' => 'delete', $articles->id], ['confirm' => __('Are you sure you want to delete # {0}?', $articles->id)]) ?>
-                <?php endif; ?>
-                
-            </td>
+                    <?= $this->Html->link(__('View'), ['controller' => 'Articles', 'action' => 'view', $article->slug]) ?>
+
+                    <?php if(in_array($loggedIn->role_id, [1,2]) || $loggedIn->id == $user->id ): ?>
+                        <?= $this->Html->link(__('Edit'), ['controller' => 'Articles', 'action' => 'edit', $article->slug]) ?>
+                    <?php endif; ?>
+                    <?php if($loggedIn->role_id == 1 || $loggedIn->id == $user->id ): ?>
+                        <?= $this->Form->postLink(__('Delete'), ['controller' => 'Articles', 'action' => 'delete', $article->slug], ['confirm' => __('Are you sure you want to delete the article named {0}?', $article->title)]) ?>
+                    <?php endif; ?>                
+                </td>
             </tr>
             <?php endforeach; ?>
         </table>

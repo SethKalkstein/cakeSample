@@ -11,8 +11,18 @@ class Article extends Entity
         '*' => true,
         'id' => false,
         'slug' => false,
-        'tag_string' => true
+        'tag_string' => true,
+        'blurb'=> true
     ];
+
+    protected function _getBlurb(){
+        if (isset($this->_properties['blurb'])) {
+            return $this->_properties['blurb'];
+        }
+        $blurbLength = strlen($this->body) >= 35 ? 35 : strlen($this->body);
+
+        return substr($this->body, 0, $blurbLength) . "...";
+    }
 
     protected function _getTagString()
     {

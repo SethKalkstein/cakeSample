@@ -22,18 +22,56 @@ class UsersController extends AppController
         parent::initialize();
         //set the authenticated as a user object or false if noone is logged in
         $loggedIn = $this->Auth->user() ? $this->getLoggedIn() : false;
+        //allow people not logged in to create an account for themselves
+        if(!$loggedIn) $this->Auth->allow("add");
 
-        $this->Auth->allow(["logout", "delete",
-            (!$loggedIn || $loggedIn->role_id == 1 ? "add" : "")]);
+        $this->set('loggedIn', $loggedIn);   
+    }
 
-        if(!$loggedIn) $this->Auth->deny('edit', 'index', 'view', 'delete');
+
+    public function isAuthorized($user)
+    {   
     
-        $this->set('loggedIn', $loggedIn);
+        $action = $this->request->getParam("action");
+        $pass = $this->request->getParam("pass");
+        // echo "Passed Arguments: ". var_dump($pass);
+        // if ($pass == null){
+        //     echo "pass is null";
+        // } else {
+        //     echo "<br> in another form" . $pass[0];
+        // }
+        $loggedInUser = $this->Users->get($this->Auth->user('id'));
+
+        if ($loggedInUser === null) {
+            //people not logged in can add themselves as a new user. (sign up)
+            if( $action == 'add'){
+                return true;
+            } else{
+                //they can't do anything else
+                return false;
+            }
+        } else if ($loggedInUser->role_id == 1) {
+            return true; //admin can do anything
+        // } else if ($action == 'index' || $action == "logout") {
+        } else if (in_array($action, ["index", "logout", "view"])) {
+            //everyone logged in can see all users, logout, and view individual users
+            return true;
+            
+        } else if ($pass != null && ($loggedInUser->id == $pass[0] && in_array($action, ["edit", "delete"]))) {
+            //users can delete or edit themself
+            return true;
+        } else {
+            return false;
+        }
+        //fail safe!
+        return false;
+
     }
 
      private function getLoggedIn(){
 
         $loggedInUser = $this->Auth->user() ? $this->Users->get($this->Auth->user('id')) : false;
+        // $this->Flash->success(__("I am in the get logged method"));
 
         return $loggedInUser;
      }
