@@ -34,15 +34,13 @@ class ArticlesController extends AppController
 
         $loggedInUser = $this->Users->get($this->Auth->user('id'));
 
-        echo "The Pass: ". "<br>"; 
-        echo var_dump($pass) . "<br>";
-        echo "The Slug: " .  "<br>"; 
-        echo var_dump($slug) . "<br>";
-        echo "The Article: " .  "<br>"; 
-        echo var_dump($article)  . "<br>"; 
+        // echo "The Pass: ". "<br>"; 
+        // echo var_dump($pass) . "<br>";
+        // echo "The Slug: " .  "<br>"; 
+        // echo var_dump($slug) . "<br>";
+        // echo "The Article: " .  "<br>"; 
+        // echo var_dump($article)  . "<br>"; 
         // The add and tags actions are always allowed to logged in users.
-
-        $loggedInUser = $this->Users->get($this->Auth->user('id'));
 
         if($loggedInUser == null){
             if(in_array($action, [ 'index', 'tags'])){
@@ -130,10 +128,10 @@ class ArticlesController extends AppController
     // Add to existing src/Controller/ArticlesController.php file
     public function view($slug = null)
     {
-        $article6 = $this->Articles->newEntity();
+
         $article = $this->Articles
         ->findBySlug($slug)
-        ->contain(["Tags"])
+        ->contain(["Tags", "Users"])
         ->firstOrFail();
         $this->set(compact('article'));
     }

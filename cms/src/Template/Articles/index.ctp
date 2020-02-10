@@ -48,7 +48,7 @@
                             "Delete", 
                             ["action"=> "delete", $article->slug], 
                             ["confirm"=> "Are you certain?"]) ?>
-                    <?php endif; ?>  <!-- delete condition -->
+                    <?php endif; ?>  <!-- delete action -->
                 <?php endif; ?> <!-- end admin, editor and writer of article -->
             </td>
         <?php endif; ?>  <!-- end if logged in  -->

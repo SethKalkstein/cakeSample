@@ -12,6 +12,23 @@ use App\Controller\AppController;
  */
 class TagsController extends AppController
 {
+    public function initialize()
+    {
+        parent::initialize();
+    }
+
+    public function isAuthorized($user)
+    {
+        // $loggedInUser = $this->Users->get($this->Auth->user('id'));
+        $loggedInUser = $this->Auth->user('id');
+     
+        if($loggedInUser == null){
+            return false;
+        } else {
+            return true;
+        }
+        return false;
+    }
     /**
      * Index method
      *
