@@ -14,6 +14,7 @@
 </nav>
 <div class="tags index large-9 medium-8 columns content">
     <h3><?= __('Tags') ?></h3>
+    <?= $this->Html->link(__('tagLower'), ['action' => 'tagLower']) ?>
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>

@@ -51,8 +51,8 @@ class ArticlesController extends AppController
         } else if ($loggedInUser->role_id == 1){
             //admins can create edit and delete anyone's articles, they can do everything!
             return true;
-        } else if ($loggedInUser->role_id == 2 && in_array($action, [ 'add', 'edit'])){
-            //eidtors can add articles for others, and edit them, but can't delete them
+        } else if ($loggedInUser->role_id == 2 && $action == 'edit'){
+            //eidtors edit articles, but can't delete them or add new ones for people
             return true;
         } else if ($article != null && $article->user_id == $loggedInUser->id){
             //users can do anything to their own articles
@@ -138,23 +138,29 @@ class ArticlesController extends AppController
 
     public function add(){
 
-        echo "Before 1";
+
         $article = $this->Articles->newEntity();
-        echo "After 1";
+
         if($this->request->is('post')){
             $article = $this->Articles->patchEntity($article, $this->request->getData());
-            echo "Before 2";
-            $article->user_id = $this->Auth->user("id");
-            echo "After 2";
-            if ($this->Articles->save($article)){
-                $this->Flash->success(__("Your article has been saved."));
-                return $this->redirect((['action'=>'index']));
+            
+            if($this->Auth->user('id') == $article->user_id || $this->Auth->user('role_id') == 1){
+            // $article->user_id = $this->Auth->user("id");
+                if ($this->Articles->save($article)){
+                    $this->Flash->success(__("Your article has been saved."));
+                    return $this->redirect((['action'=>'index']));
+                }
             }
             $this->Flash->error(__("Unable to add your Article"));
         }
         $tags = $this->Articles->Tags->find("list");
         $this->set("tags", $tags);
         $this->set('article', $article);
+
+        // $this->set(compact('user'));
+        // $this->set('roles', $this->Users->Roles->find('list'));
+
+        $this->set('users', $this->Articles->Users->find('list', ["keyField"=>"id", "valueField"=>"full_identifier"]));
     }
 
     public function edit($slug)
