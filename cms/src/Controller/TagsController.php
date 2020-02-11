@@ -39,6 +39,7 @@ class TagsController extends AppController
         $tags = $this->paginate($this->Tags);
 
         $this->set(compact('tags'));
+
     }
 
     /**

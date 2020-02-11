@@ -51,6 +51,10 @@ class ArticlesTable extends Table
         $newTags = array_map('trim', explode(',', $tagString));
         // Remove all empty tags
         $newTags = array_filter($newTags);
+        //convert tags to lower case
+        $newTags = array_map(function($word){ 
+                    return strtolower ($word);
+                },  $newTags);
         // Reduce duplicated tags
         $newTags = array_unique($newTags);
 

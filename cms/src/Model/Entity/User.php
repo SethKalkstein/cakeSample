@@ -35,8 +35,18 @@ class User extends Entity
         'created' => true,
         'modified' => true,
         'articles' => true,
-        'active' => true
+        'active' => true,
+        'full_indentifier' => true
     ];
+
+
+    protected function _getFullIdentifier(){
+        if (isset($this->_properties['full_indentifier'])) {
+            return $this->_properties['full_indentifier'];
+        }
+
+        return "Email: " . $this->email. " | Name: " . $this->lname .", " . $this->fname . " | ID: " . $this->id;
+    }
 
     /**
      * Fields that are excluded from JSON versions of the entity.
